@@ -9,7 +9,7 @@ This is a small Xcode project based on a combination of [this Reddit post](https
 ## Limitations
 
 - Folders inside Dropbox and Google Drive won't work. To make them work, create an alias to the folder and set _that_ as the path in `URLs`
-- Your app name needs to be unique, hence the `rename` script. Attempting to run two apps of the same name causes weird issues.
+- The `APPNAME` must be unique, or you will overwrite old icon apps
 - To stop your icon app running, you need to delete the app or reboot.
 - All of this is _very_ flaky. If it doesn't work, try cleaning the build folder in Xcode and rebuilding (Product > Clean Build Folder). As a last resort a reboot seemed to fix it on a few occasions.
 
@@ -23,17 +23,19 @@ Clone or download this repository and then run the following with your options f
 
 ```bash
 # three arguments
-bash rename.sh APPNAME PATH SFSYMBOL
+bash iconify.sh APPNAME PATH SFSYMBOL
 
 # real example
-bash rename.sh DownloadFolderIcon /Users/robb/Downloads flame.fill
+bash iconify.sh DownloadFolderIcon /Users/robb/Downloads flame.fill
 ```
 
-- Open `DownloadFolderIcon.xcodeproj` in Xcode, click `Product` from the main menu, then `Archive` then `Distribute App` > `Custom` > `Copy App` and save it somewhere on your computer
-- Open the folder you just saved and open the `.app` inside
-- Finally, you'll need to enable the extension in Settings > Privacy and Security > Extensions > Added Extensions. Look for `DownloadFolderIcon` in here. Sometimes it needs a toggle on/off a couple of times to work.
+- In the `dist` folder, open the new `APPNAME.app`
+- Enable the extension. Sometimes it needs a toggle a few times to work.
+  - On newer versions of macOS, this is in _Settings → General → Login Items and Extensions_.
+  - On older versions of macOS, this is in _Settings → Privacy and Security → Extensions → Added Extensions_.
+- Add your app to Login Items (_Settings → General → Login Items_) so it runs on boot.
 
-Assuming everything worked correctly, if you drag your selected folder to the sidebar you should see the SF Symbol you selected as the icon. You should also add your `.app` to Login Items (Settings > General > Login Items) so it runs on boot.
+Assuming everything worked correctly, if you drag your selected folder to the sidebar you should see the SF Symbol you selected as the icon.
 
 ## Using a custom SF Symbol
 
@@ -43,11 +45,14 @@ This does work, sometimes, but like all of this it's flaky.
 - Change `NameOfYourApp/info.plist` icon entry to the name of your custom symbol
 - Rebuild and pray to your favourite deity
 
-## Further Info
+## Using the same icon for multiple folders
 
-You have to run an app for _every_ different icon you want to use. So download/copy the repo again and follow the above steps.
+If you want to use the same icon for multiple folders, the `URLs` file may be edited to contain multiple lines. Edit it as, for example:
 
-If you want to use the same icon for multiple folders you can edit the `URLs` file by going to the `.app` in Finder, right click and choose `Show Package Contents`. Then open `Contents/Plugins` and do `Show Package Contents` on `Extension.appex` then the `URLs` file is inside `Contents`.
+```sh
+APPNAME="DownloadFolderIcon"  # <- or whatever you called it
+$EDITOR "dist/${APPNAME}.app/Contents/Plugins/${APPNAME}Sync.appex/Contents/Resources/URLs"
+```
 
 ## Screencasts
 
